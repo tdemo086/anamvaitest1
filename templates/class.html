@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Classes - Anam Academy{% endblock %}
+
+{% block content %}
+<h1 class="text-4xl font-extrabold glow-text mb-8 text-center">Classes for Batch {{ season_id }}</h1>
+
+<div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+  {% for class_obj in classes %}
+  <div class="bg-gray-800 p-5 rounded-lg shadow-lg hover:shadow-blue-500 transition cursor-pointer">
+    <h2 class="text-2xl font-semibold mb-3">{{ class_obj.class_name }}</h2>
+    <p class="mb-4">{{ class_obj.description or "No description available." }}</p>
+
+    {% if class_obj.link %}
+    <iframe
+      src="{{ class_obj.link }}"
+      class="w-full h-64 rounded"
+      frameborder="0"
+      allowfullscreen
+    ></iframe>
+    {% else %}
+    <p class="text-gray-400 italic">No video link available.</p>
+    {% endif %}
+  </div>
+  {% else %}
+  <p class="text-center text-gray-400 col-span-full">No classes found for this Batch.</p>
+  {% endfor %}
+</div>
+{% endblock %}

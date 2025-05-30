@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel - Anam Academy{% endblock %}
+{% block content %}
+<h1 class="text-4xl font-extrabold glow-text mb-8 text-center">Admin Panel</h1>
+
+<div class="max-w-5xl mx-auto space-y-10">
+
+  <!-- Add Member -->
+  <section class="bg-gray-800 p-6 rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold mb-4 glow-text">Add Member</h2>
+    <form method="POST" action="{{ url_for('admin_add_member') }}" enctype="multipart/form-data" class="space-y-3">
+      <input name="name" type="text" placeholder="Name" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <input name="role" type="text" placeholder="Role (Admin/Member)" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <input name="contact" type="text" placeholder="Contact Info" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <input name="photo" type="file" accept="image/*" required class="w-full text-gray-200" />
+      <button type="submit" class="bg-blue-600 px-4 py-2 rounded glow-button hover:bg-blue-700 transition">Add Member</button>
+    </form>
+  </section>
+
+  <!-- Add Season -->
+  <section class="bg-gray-800 p-6 rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold mb-4 glow-text">Add Batch</h2>
+    <form method="POST" action="{{ url_for('admin_add_season') }}" class="space-y-3">
+      <input name="season_id" type="number" placeholder="Season ID" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <input name="title" type="text" placeholder="Season Title" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <textarea name="description" placeholder="Description" rows="3" class="w-full p-2 rounded bg-gray-700 text-gray-200"></textarea>
+      <button type="submit" class="bg-blue-600 px-4 py-2 rounded glow-button hover:bg-blue-700 transition">Add Batch</button>
+    </form>
+  </section>
+
+<!-- Add Class -->
+<section class="bg-gray-800 p-6 rounded-lg shadow-lg">
+  <h2 class="text-3xl font-bold mb-4 glow-text">Add Class</h2>
+  <form method="POST" action="{{ url_for('admin_add_class') }}" class="space-y-3">
+    <input name="season_id" type="number" placeholder="Season ID" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+    
+    <input name="class_name" type="text" placeholder="Class Name" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+    
+    <textarea name="description" placeholder="Description" rows="3" class="w-full p-2 rounded bg-gray-700 text-gray-200"></textarea>
+    
+    <!-- Link input -->
+    <input name="link" type="url" placeholder="Class Link (e.g., https://...)" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+    
+    <button type="submit" class="bg-blue-600 px-4 py-2 rounded glow-button hover:bg-blue-700 transition">Add Class</button>
+  </form>
+</section>
+
+
+  <!-- Add Note -->
+  <section class="bg-gray-800 p-6 rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold mb-4 glow-text">Add Note</h2>
+    <form method="POST" action="{{ url_for('admin_add_note') }}" class="space-y-3">
+      <input name="season_id" type="number" placeholder="Season ID" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <input name="title" type="text" placeholder="Note Title" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <input name="drive_link" type="url" placeholder="Google Drive Link" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <textarea name="description" placeholder="Description" rows="3" class="w-full p-2 rounded bg-gray-700 text-gray-200"></textarea>
+      <button type="submit" class="bg-blue-600 px-4 py-2 rounded glow-button hover:bg-blue-700 transition">Add Note</button>
+    </form>
+  </section>
+
+<!-- Add Exam -->
+<section class="bg-gray-800 p-6 rounded-lg shadow-lg">
+  <h2 class="text-3xl font-bold mb-4 glow-text">Add Exam</h2>
+  <form method="POST" action="{{ url_for('admin_add_exam') }}" class="space-y-3">
+    <input name="season_id" type="number" placeholder="Season ID" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+    
+    <input name="title" type="text" placeholder="Exam Title" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+    
+    <input name="link" type="url" placeholder="Exam Link (URL)" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+    
+    <button type="submit" class="bg-blue-600 px-4 py-2 rounded glow-button hover:bg-blue-700 transition">Add Exam</button>
+  </form>
+</section>
+
+
+  <!-- Add Post -->
+  <section class="bg-gray-800 p-6 rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold mb-4 glow-text">Add Post</h2>
+    <form method="POST" action="{{ url_for('admin_add_post') }}" class="space-y-3">
+      <input name="season_id" type="number" placeholder="Season ID" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <input name="title" type="text" placeholder="Post Title" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <input name="enroll_link" type="url" placeholder="Enroll Link" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <input name="image_url" type="url" placeholder="Image URL" required class="w-full p-2 rounded bg-gray-700 text-gray-200" />
+      <button type="submit" class="bg-blue-600 px-4 py-2 rounded glow-button hover:bg-blue-700 transition">Add Post</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

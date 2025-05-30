@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Notes - Anam Academy{% endblock %}
+{% block content %}
+<h1 class="text-4xl font-extrabold glow-text mb-8 text-center">Notes for Batch {{ selected_season }}</h1>
+
+<div class="max-w-3xl mx-auto space-y-4">
+  {% for note in notes %}
+  <a href="{{ note.drive_link }}" target="_blank"
+     class="block p-4 rounded-lg bg-gray-800 hover:bg-blue-900 glow-button transition shadow-md">
+    <h3 class="text-xl font-semibold">{{ note.title }}</h3>
+    <p class="text-gray-400">{{ note.description or "No description." }}</p>
+  </a>
+  {% else %}
+  <p class="text-center text-gray-400">No notes found for this Batch.</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="https://i.postimg.cc/XNGTWNDZ/489946406-122141803658576424-6229289546825196479-n-removebg-preview.png" type="image/png">
+  <title>{% block title %}Anam Academy{% endblock %}</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Glow effect */
+    .glow-text {
+      text-shadow:
+        0 0 5px #3b82f6,
+        0 0 10px #2563eb,
+        0 0 20px #1e40af;
+    }
+    .glow-button {
+      box-shadow:
+        0 0 5px #3b82f6,
+        0 0 10px #2563eb;
+      transition: box-shadow 0.3s ease-in-out;
+    }
+    .glow-button:hover {
+      box-shadow:
+        0 0 10px #3b82f6,
+        0 0 20px #2563eb,
+        0 0 30px #1e40af;
+    }
+    /* Modal backdrop */
+    .modal-bg {
+      background-color: rgba(0,0,0,0.7);
+    }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="bg-gray-800 shadow-lg sticky top-0 z-50">
+  <div class="container mx-auto px-4 flex justify-between items-center h-16">
+    <a href="{{ url_for('home') }}" class="flex items-center space-x-2 text-2xl font-bold">
+  <img src="https://i.postimg.cc/BQRkbrkh/489946406-122141803658576424-6229289546825196479-n.jpg" alt="Logo" class="w-10 h-10 rounded-full">
+  <span>Hasan Anam</span>
+</a>
+
+
+    <!-- Hamburger for mobile -->
+    <button id="menuBtn" class="md:hidden text-gray-300 focus:outline-none" aria-label="Open menu">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+           xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+           d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
+
+    <!-- Desktop menu -->
+    <ul class="hidden md:flex space-x-4 font-semibold text-gray-300">
+      <li><a href="{{ url_for('home') }}" class="hover:text-blue-500">Home</a></li>
+      <li><a href="{{ url_for('class_page') }}" class="hover:text-blue-500">Class</a></li>
+      <li><a href="{{ url_for('notes_page') }}" class="hover:text-blue-500">Notes</a></li>
+      <li><a href="{{ url_for('exams_page') }}" class="hover:text-blue-500">Exams</a></li>
+      <li><a href="{{ url_for('members_page') }}" class="hover:text-blue-500">Members</a></li>
+      {% if session.get('user') == ADMIN_USERNAME %}
+      <li><a href="{{ url_for('admin_page') }}" class="hover:text-blue-500">Admin</a></li>
+      {% endif %}
+    </ul>
+
+    <div class="hidden md:flex items-center space-x-4">
+      {% if session.get('user') %}
+        <span class="text-blue-400 font-semibold">Welcome, {{ session.get('user') }}</span>
+        <a href="{{ url_for('logout') }}" class="bg-blue-600 px-3 py-1 rounded glow-button hover:bg-blue-700 transition">Logout</a>
+      {% else %}
+        <button id="loginBtn" class="bg-blue-600 px-3 py-1 rounded glow-button hover:bg-blue-700 transition">Login / Register</button>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile side menu (drawer) -->
+<div id="mobileMenu" class="fixed top-0 left-0 h-full w-64 bg-gray-800 text-gray-300 transform -translate-x-full transition-transform duration-300 ease-in-out z-50 shadow-lg">
+  <button id="closeMobileMenu" class="text-gray-400 hover:text-gray-200 text-3xl p-4" aria-label="Close menu">&times;</button>
+  <ul class="flex flex-col space-y-4 mt-4 px-6 font-semibold">
+    <li><a href="{{ url_for('home') }}" class="hover:text-blue-500">Home</a></li>
+    <li><a href="{{ url_for('class_page') }}" class="hover:text-blue-500">Class</a></li>
+    <li><a href="{{ url_for('notes_page') }}" class="hover:text-blue-500">Notes</a></li>
+    <li><a href="{{ url_for('exams_page') }}" class="hover:text-blue-500">Exams</a></li>
+    <li><a href="{{ url_for('members_page') }}" class="hover:text-blue-500">Members</a></li>
+    {% if session.get('user') == ADMIN_USERNAME %}
+    <li><a href="{{ url_for('admin_page') }}" class="hover:text-blue-500">Admin</a></li>
+    {% endif %}
+    <li>
+      {% if session.get('user') %}
+        <span class="text-blue-400 font-semibold block mb-2">Welcome, {{ session.get('user') }}</span>
+        <a href="{{ url_for('logout') }}" class="block bg-blue-600 px-3 py-1 rounded glow-button hover:bg-blue-700 transition text-center">Logout</a>
+      {% else %}
+        <button id="loginBtnMobile" class="w-full bg-blue-600 px-3 py-1 rounded glow-button hover:bg-blue-700 transition">Login / Register</button>
+      {% endif %}
+    </li>
+  </ul>
+</div>
+
+<!-- Overlay for mobile menu -->
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40"></div>
+
+<!-- Main content -->
+<main class="flex-grow container mx-auto px-4 py-6">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="space-y-2 mb-4">
+      {% for category, message in messages %}
+        <div class="p-3 rounded
+          {% if category == 'success' %} bg-green-700 text-green-100
+          {% elif category == 'danger' %} bg-red-700 text-red-100
+          {% elif category == 'warning' %} bg-yellow-600 text-yellow-100
+          {% else %} bg-gray-700 text-gray-100 {% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-400 text-center py-4 text-sm">
+  Made with TeslaTech
+</footer>
+
+<!-- Login/Register Modal -->
+<div id="loginModal" class="hidden fixed inset-0 flex items-center justify-center modal-bg z-50">
+  <div class="bg-gray-900 rounded-lg shadow-lg max-w-md w-full p-6 relative">
+    <button id="closeModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 text-xl font-bold" aria-label="Close modal">&times;</button>
+    <div class="flex space-x-4">
+      <!-- Login form -->
+      <div class="w-1/2">
+        <h2 class="text-2xl font-bold mb-4 glow-text">Login</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+          <input type="text" name="username" placeholder="Username" required
+            class="w-full mb-3 p-2 rounded bg-gray-800 border border-gray-700 text-gray-200" />
+          <input type="password" name="password" placeholder="Password" required
+            class="w-full mb-4 p-2 rounded bg-gray-800 border border-gray-700 text-gray-200" />
+          <button type="submit" class="w-full bg-blue-600 py-2 rounded glow-button hover:bg-blue-700 transition">Login</button>
+        </form>
+      </div>
+      <!-- Register form -->
+      <div class="w-1/2 border-l border-gray-700 pl-4">
+        <h2 class="text-2xl font-bold mb-4 glow-text">Register</h2>
+        <form method="POST" action="{{ url_for('register') }}">
+          <input type="text" name="username" placeholder="Username" required
+            class="w-full mb-3 p-2 rounded bg-gray-800 border border-gray-700 text-gray-200" />
+          <input type="email" name="email" placeholder="Email" required
+            class="w-full mb-3 p-2 rounded bg-gray-800 border border-gray-700 text-gray-200" />
+          <input type="password" name="password" placeholder="Password" required
+            class="w-full mb-3 p-2 rounded bg-gray-800 border border-gray-700 text-gray-200" />
+          <input type="password" name="confirm_password" placeholder="Confirm Password" required
+            class="w-full mb-4 p-2 rounded bg-gray-800 border border-gray-700 text-gray-200" />
+          <button type="submit" class="w-full bg-blue-600 py-2 rounded glow-button hover:bg-blue-700 transition">Register</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Elements
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const closeMobileMenu = document.getElementById('closeMobileMenu');
+  const overlay = document.getElementById('overlay');
+
+  // Show mobile menu
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.remove('-translate-x-full');
+    overlay.classList.remove('hidden');
+  });
+
+  // Hide mobile menu
+  closeMobileMenu.addEventListener('click', () => {
+    mobileMenu.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  });
+
+  // Hide mobile menu when clicking outside
+  overlay.addEventListener('click', () => {
+    mobileMenu.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  });
+
+  // Login modal
+  const loginModal = document.getElementById('loginModal');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginBtnMobile = document.getElementById('loginBtnMobile');
+  const closeModal = document.getElementById('closeModal');
+
+  if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+      loginModal.classList.remove('hidden');
+    });
+  }
+  if (loginBtnMobile) {
+    loginBtnMobile.addEventListener('click', () => {
+      loginModal.classList.remove('hidden');
+      // Also hide mobile menu and overlay
+      mobileMenu.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    });
+  }
+  closeModal.addEventListener('click', () => {
+    loginModal.classList.add('hidden');
+  });
+
+  // Optional: close modal on ESC key
+  window.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') {
+      if (!loginModal.classList.contains('hidden')) {
+        loginModal.classList.add('hidden');
+      }
+      if (!mobileMenu.classList.contains('-translate-x-full')) {
+        mobileMenu.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

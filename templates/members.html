@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Members - Anam Academy{% endblock %}
+{% block content %}
+<h1 class="text-4xl font-extrabold glow-text mb-8 text-center">Members & Admins</h1>
+
+<div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+  {% for member in members %}
+  <div class="bg-gray-800 p-5 rounded-lg shadow-lg text-center cursor-pointer hover:shadow-blue-500 transition"
+       onclick="alert('Contact info for {{ member.name }}: {{ member.contact }}')">
+    <img src="{{ member.photo_url }}" alt="{{ member.name }}" class="mx-auto w-24 h-24 object-cover rounded-full mb-3" />
+    <h3 class="text-xl font-semibold mb-1">{{ member.name }}</h3>
+    <p class="text-gray-400">{{ member.role }}</p>
+  </div>
+  {% else %}
+  <p class="col-span-full text-center text-gray-400">No members found.</p>
+  {% endfor %}
+</div>
+{% endblock %}
