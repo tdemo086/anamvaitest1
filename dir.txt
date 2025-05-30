@@ -1,0 +1,75 @@
+/project_root
+    /static
+        /css
+        /js
+        /images
+    /templates
+        base.html
+        home.html
+        class.html
+        notes.html
+        exams.html
+        members.html
+        admin.html
+        login.html
+        register.html
+    app.py
+    config.py
+    .env
+    requirements.txt
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        # Admin login check
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['user'] = ADMIN_USERNAME
+            flash("Admin logged in successfully.", "success")
+            return redirect(url_for('admin_page'))
+
+        # User login check in DB
+        user = mongo.db.users.find_one({"username": username})
+        if user and check_password_hash(user.get('password_hash', ''), password):
+            if user.get('student', False) and user.get('approved', False):
+                session['user'] = username
+                flash("Logged in successfully.", "success")
+                return redirect(url_for('home'))
+            else:
+                flash("Your account is not approved by admin yet.", "warning")
+        else:
+            flash("Invalid username or password.", "danger")
+
+    return render_template('login.html')
+
+
+    # Login route
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        # Admin login check
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['user'] = ADMIN_USERNAME
+            session['selected_season'] = '3'  # Set default season
+            flash("Admin logged in successfully.", "success")
+            return redirect(url_for('admin_page'))
+
+        # User login check in DB
+        user = mongo.db.users.find_one({"username": username})
+        if user and check_password_hash(user.get('password_hash', ''), password):
+            if user.get('student', False) and user.get('approved', False):
+                session['user'] = username
+                session['selected_season'] = '3'  # Set default season
+                flash("Logged in successfully.", "success")
+                return redirect(url_for('home'))
+            else:
+                flash("Your account is not approved by admin yet.", "warning")
+        else:
+            flash("Invalid username or password.", "danger")
+
+    return render_template('login.html')
